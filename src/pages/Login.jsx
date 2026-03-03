@@ -26,6 +26,10 @@ export default function Login() {
         setSuccessMsg(null)
 
         try {
+            if (!supabase.supabaseUrl || supabase.supabaseUrl === 'https://placeholder.supabase.co') {
+                throw new Error('Supabase integration is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables (e.g., in Netlify settings).')
+            }
+
             if (isSignUp) {
                 if (!name || !gender || !age) {
                     throw new Error('Please fill in all profile details to sign up')
@@ -64,17 +68,8 @@ export default function Login() {
     }
 
     return (
-        <div
-            className="min-h-screen flex items-center justify-center px-4"
-            style={{
-                backgroundImage: 'url("https://images.unsplash.com/photo-1532375810709-75b1d315ae72?q=80&w=2000&auto=format&fit=crop")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundBlendMode: 'overlay',
-                backgroundColor: 'rgba(0,0,0,0.6)'
-            }}
-        >
-            <div className="max-w-md w-full space-y-8 bg-white/95 dark:bg-gray-800/95 backdrop-blur shadow-2xl p-8 rounded-2xl border border-gray-100 dark:border-gray-700">
+        <div className="min-h-screen flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
+            <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 shadow-xl p-8 rounded-2xl border border-gray-100 dark:border-gray-700">
                 <div className="text-center">
                     <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-4">
                         <Mic className="w-8 h-8 text-blue-600 dark:text-blue-400" />
