@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Fallback to hardcoded keys for Netlify deployments where .env is missing
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://njyjtptsntaoovvwshud.supabase.co'
+// Route Supabase through our proxy to bypass strict Wi-Fi firewalls!
+// If window is defined, use current domain's proxy, else fallback.
+const supabaseUrl = typeof window !== 'undefined' ? `${window.location.origin}/api/supabase` : 'https://njyjtptsntaoovvwshud.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_dEtJXZH72BcFCc3j3jOCGQ_DjkQjLTK'
 
 if (!supabaseUrl || !supabaseAnonKey) {
