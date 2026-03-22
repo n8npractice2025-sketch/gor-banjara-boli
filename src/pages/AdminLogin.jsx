@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabaseClient'
 import { Shield } from 'lucide-react'
 
 export default function AdminLogin() {
@@ -9,7 +10,7 @@ export default function AdminLogin() {
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault()
         setLoading(true)
         setError(null)
@@ -17,16 +18,33 @@ export default function AdminLogin() {
         const adminUser = import.meta.env.VITE_ADMIN_USERNAME || 'admin'
         const adminPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123'
 
-        // Small delay to feel like a real auth check
-        setTimeout(() => {
+        try {
             if (username === adminUser && password === adminPass) {
+                // Also sign in to Supabase so RLS policies work (admin can see all data)
+                const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'admin@gmail.com'
+                const adminSupabasePass = import.meta.env.VITE_ADMIN_SUPABASE_PASSWORD || '123456'
+
+                const { error: supabaseError } = await supabase.auth.signInWithPassword({
+                    email: adminEmail,
+                    password: adminSupabasePass
+                })
+
+                if (supabaseError) {
+                    console.warn('Supabase admin sign-in failed:', supabaseError.message)
+                    // Continue anyway - admin can still view the page, but some DB ops may fail
+                }
+
                 sessionStorage.setItem('adminAuthenticated', 'true')
                 navigate('/admin')
             } else {
                 setError('Invalid admin credentials. Please try again.')
             }
+        } catch (err) {
+            console.error('Login error:', err)
+            setError('Login failed. Please try again.')
+        } finally {
             setLoading(false)
-        }, 500)
+        }
     }
 
     return (
