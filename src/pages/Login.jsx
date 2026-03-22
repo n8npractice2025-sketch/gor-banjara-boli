@@ -168,7 +168,7 @@ export default function Login() {
                     </div>
                 </form>
 
-                <div className="text-center">
+                <div className="text-center space-y-2">
                     <button
                         type="button"
                         className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
@@ -180,6 +180,15 @@ export default function Login() {
                     >
                         {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
                     </button>
+                    <div>
+                        <button
+                            type="button"
+                            className="text-xs text-gray-500 dark:text-gray-600 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+                            onClick={() => navigate('/admin-login')}
+                        >
+                            Admin Login
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

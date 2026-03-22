@@ -117,13 +117,7 @@ export default function Dashboard() {
                         </div>
                         {user && (
                             <div className="flex items-center space-x-4">
-                                <button
-                                    onClick={() => navigate('/admin')}
-                                    className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
-                                >
-                                    Admin View
-                                </button>
-                                <span className="text-sm font-medium text-gray-600 dark:text-gray-300 border-l border-gray-300 dark:border-gray-600 pl-4">
+                                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                                     {user.user_metadata?.name || user.email}
                                 </span>
                                 <button
