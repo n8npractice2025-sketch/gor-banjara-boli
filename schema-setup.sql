@@ -76,7 +76,7 @@ CREATE POLICY "Allow users to read their own recordings or admins to read all"
 ON public.recordings FOR SELECT 
 TO authenticated 
 USING (
-  auth.uid() = user_id OR auth.email() = 'YOUR_ADMIN_EMAIL@example.com' -- <-- CHANGE THIS TO YOUR EMAIL
+  auth.uid() = user_id OR auth.email() = 'admin@gmail.com'
 );
 
 -- Allow authenticated users to delete recordings (for admin use)
