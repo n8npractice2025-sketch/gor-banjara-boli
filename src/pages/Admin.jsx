@@ -48,8 +48,8 @@ export default function Admin() {
             const { data: { session } } = await supabase.auth.getSession()
             if (!session) {
                 // No Supabase session - try to sign in with admin credentials
-                const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || ''
-                const adminPassword = import.meta.env.VITE_ADMIN_SUPABASE_PASSWORD || ''
+                const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'admin@gmail.com'
+                const adminPassword = import.meta.env.VITE_ADMIN_SUPABASE_PASSWORD || '123456'
                 
                 if (adminEmail && adminPassword) {
                     await supabase.auth.signInWithPassword({
