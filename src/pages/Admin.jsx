@@ -135,7 +135,7 @@ export default function Admin() {
             }
         } catch (err) {
             console.error('Error fetching recordings:', err)
-            setError('Failed to load recordings.')
+            setError('Failed to load recordings: ' + (err.message || JSON.stringify(err) || 'Unknown error'))
         }
     }
 
