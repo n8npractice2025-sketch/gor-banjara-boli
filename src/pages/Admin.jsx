@@ -35,14 +35,32 @@ export default function Admin() {
     const [editAudioFile, setEditAudioFile] = useState(null)
     const [saving, setSaving] = useState(false)
 
-    // Auth guard — check sessionStorage
+    // Auth guard — check sessionStorage AND Supabase session
     useEffect(() => {
         const isAdmin = sessionStorage.getItem('adminAuthenticated')
         if (isAdmin !== 'true') {
             navigate('/admin-login')
             return
         }
-        fetchAll()
+
+        // Also verify we have a valid Supabase auth session for RLS
+        const checkSupabaseSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session) {
+                // No Supabase session - try to sign in with admin credentials
+                const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || ''
+                const adminPassword = import.meta.env.VITE_ADMIN_SUPABASE_PASSWORD || ''
+                
+                if (adminEmail && adminPassword) {
+                    await supabase.auth.signInWithPassword({
+                        email: adminEmail,
+                        password: adminPassword
+                    })
+                }
+            }
+            fetchAll()
+        }
+        checkSupabaseSession()
     }, [])
 
     // Debounce search
@@ -149,10 +167,19 @@ export default function Admin() {
         try {
             // Extract filename from audio_url for storage deletion
             if (deleteTarget.audio_url) {
-                const urlParts = deleteTarget.audio_url.split('/')
-                const fileName = urlParts[urlParts.length - 1]
-                // Attempt storage file removal (ignore error if file already gone)
-                await supabase.storage.from('audio-recordings').remove([fileName])
+                try {
+                    // The public URL format: .../storage/v1/object/public/audio-recordings/filename
+                    const url = new URL(deleteTarget.audio_url)
+                    const pathParts = url.pathname.split('/audio-recordings/')
+                    const fileName = pathParts.length > 1 ? decodeURIComponent(pathParts[1]) : null
+                    
+                    if (fileName) {
+                        await supabase.storage.from('audio-recordings').remove([fileName])
+                    }
+                } catch (storageErr) {
+                    // Don't block the delete if storage cleanup fails
+                    console.warn('Storage cleanup failed (non-blocking):', storageErr)
+                }
             }
 
             // Remove from recordings table
@@ -168,7 +195,7 @@ export default function Admin() {
             setDeleteTarget(null)
         } catch (err) {
             console.error('Delete failed:', err)
-            alert('Failed to delete recording: ' + (err.message || 'Unknown error'))
+            alert('Failed to delete recording: ' + (err.message || err.details || 'Check that you are signed in with Supabase.'))
         } finally {
             setSaving(false)
         }
