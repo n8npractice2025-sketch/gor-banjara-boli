@@ -72,7 +72,24 @@ ON public.recordings FOR INSERT
 TO authenticated 
 WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Allow users to read their own recordings" 
+CREATE POLICY "Allow users to read their own recordings or admins to read all" 
 ON public.recordings FOR SELECT 
 TO authenticated 
-USING (auth.uid() = user_id);
+USING (
+  auth.uid() = user_id OR auth.email() = 'YOUR_ADMIN_EMAIL@example.com' -- <-- CHANGE THIS TO YOUR EMAIL
+);
+
+-- Allow authenticated users to delete recordings (for admin use)
+DROP POLICY IF EXISTS "Allow authenticated users to delete recordings" ON public.recordings;
+CREATE POLICY "Allow authenticated users to delete recordings"
+ON public.recordings FOR DELETE
+TO authenticated
+USING (true);
+
+-- Allow authenticated users to update recordings (for admin use)
+DROP POLICY IF EXISTS "Allow authenticated users to update recordings" ON public.recordings;
+CREATE POLICY "Allow authenticated users to update recordings"
+ON public.recordings FOR UPDATE
+TO authenticated
+USING (true)
+WITH CHECK (true);

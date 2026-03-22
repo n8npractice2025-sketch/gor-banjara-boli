@@ -5,6 +5,8 @@ import './index.css'
 
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import Admin from './pages/Admin.jsx'
+import AdminLogin from './pages/AdminLogin.jsx'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
@@ -12,6 +14,8 @@ createRoot(document.getElementById('root')).render(
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/admin-login" element={<AdminLogin />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
